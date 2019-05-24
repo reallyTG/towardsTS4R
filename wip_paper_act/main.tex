@@ -196,11 +196,20 @@ As data frames are of utmost importance, it stands to reason that we might like 
 How specific that type should be, however, is unclear: data frames are often quite large, and writing a type for such a thing would be tedious and perhaps not altogether informative if the data frame is used in simple ways.
 If the only operation performed on the data frame is to normalize some column and plot it, then types are not supremely helpful.
 But what if, during the modification and transformation phase of a data pipeline, the analyst is working with several data frames and joining and collating them to create new data frames?
-Many of these operations are dependent on the types of some columns,  
+Many of these operations are dependent on the types of some columns, and could fail in various ways if the column types are not compatible.
+These errors would be mitigated by (relatively) sophisticated data frame types.
 
 %
 %
 \subsection{The Burden of Annotations}
+
+A nontrivial barrier to building types into R is the need for annotations.
+For one, the syntax of the language is tricky to extend, as many characters already serve a purpose.
+This makes designing a satisfying syntax for types nontrivial.
+Further, as the type system becomes more complex, so too do the annotations:
+R is rich in runtime type information already, and statically encoding that via annotations can quickly become burdensome.
+For instance, if we would like to express that an argument to a function is a list, with some class, and certain attributes, we have over 3 things to annotate onto a single function argument.
+Ultimately, friendly-looking annotations will be attractive to users, and making the annotations easy to write and minimizing the burden of annotating is critical to adoption.
 
 %
 %

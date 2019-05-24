@@ -1,8 +1,9 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  24 MAY 2019 15:59
+This is pdfTeX, Version 3.14159265-2.6-1.40.19 (TeX Live 2018) (preloaded format=pdflatex 2018.4.16)  24 MAY 2019 16:27
 entering extended mode
  restricted \write18 enabled.
+ file:line:error style messages enabled.
  %&-line parsing enabled.
-**main
+**main.tex
 (./main.tex
 LaTeX2e <2018-04-01> patch level 2
 Babel <3.18> and hyphenation patterns for 84 language(s) loaded.
@@ -391,13 +392,16 @@ and LuaTeX
 )
 (/usr/local/texlive/2018/texmf-dist/tex/generic/pdftex/glyphtounicode.tex)
 
-pdfTeX warning: pdflatex: ToUnicode: value out of range [0,10FFFF]: 740074
+pdfTeX warning: /Library/TeX/texbin/pdflatex: ToUnicode: value out of range [0,
+10FFFF]: 740074
 
 
-pdfTeX warning: pdflatex: ToUnicode: value out of range [0,10FFFF]: 660074
+pdfTeX warning: /Library/TeX/texbin/pdflatex: ToUnicode: value out of range [0,
+10FFFF]: 660074
 
 
-pdfTeX warning: pdflatex: ToUnicode: value out of range [0,10FFFF]: 540068
+pdfTeX warning: /Library/TeX/texbin/pdflatex: ToUnicode: value out of range [0,
+10FFFF]: 540068
 (/usr/local/texlive/2018/texmf-dist/tex/latex/cmap/cmap.sty
 Package: cmap 2008/03/06 v1.0h CMap support: searchable PDF
 )
@@ -881,13 +885,13 @@ File: lstlang3.sty 2015/06/04 1.6 listings language file
 (./my_style.sty)
 \c@theorem=\count143
  Excluding comment 'screenonly' Include comment 'printonly'
-Excluding comment 'anonsuppress' Excluding comment 'acks'
-No file main.aux.
+Excluding comment 'anonsuppress' Excluding comment 'acks' (./main.aux)
 \openout1 = `main.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/nxlmi/m/it on input line 54.
 LaTeX Font Info:    Try loading font information for OML+nxlmi on input line 54
 .
+
 (/usr/local/texlive/2018/texmf-dist/tex/latex/newtx/omlnxlmi.fd
 File: omlnxlmi.fd 2013/11/19 Fontinst v1.933 font definitions for OML/nxlmi.
 )
@@ -1011,6 +1015,8 @@ Package: gettitlestring 2016/05/16 v1.5 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 54.
 LaTeX Info: Redefining \pageref on input line 54.
 LaTeX Info: Redefining \nameref on input line 54.
+
+(./main.out) (./main.out)
 \@outlinefile=\write5
 \openout5 = `main.out'.
 
@@ -1199,29 +1205,27 @@ LaTeX Font Info:    Font shape `T1/LinuxLibertineT-TLF/m/n' will be
 
 ]
 
-LaTeX Warning: Reference `sec:practicalTS' on page 2 undefined on input line 17
-8.
+LaTeX Warning: Reference `' on page 2 undefined on input line 241.
 
-
-LaTeX Warning: Reference `sec:plan' on page 2 undefined on input line 184.
-
-
-LaTeX Warning: Reference `' on page 2 undefined on input line 232.
-
-No file main.bbl.
+(./main.bbl)
 
 Package natbib Warning: There were undefined citations.
 
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 10.0pt on input line 239.
+(Font)              scaled to size 10.0pt on input line 248.
 LaTeX Font Info:    Font shape `T1/LinuxBiolinumT-TLF/m/n' will be
-(Font)              scaled to size 7.0pt on input line 239.
+(Font)              scaled to size 7.0pt on input line 248.
 [2.2]
-Package atveryend Info: Empty hook `BeforeClearDocument' on input line 239.
-Package atveryend Info: Empty hook `AfterLastShipout' on input line 239.
- (./main.aux)
-Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 239.
-Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 239.
+Package atveryend Info: Empty hook `BeforeClearDocument' on input line 248.
+Package atveryend Info: Empty hook `AfterLastShipout' on input line 248.
+ (./main.aux
+
+Package natbib Warning: Citation(s) may have changed.
+(natbib)                Rerun to get citations correct.
+
+)
+Package atveryend Info: Executing hook `AtVeryEndDocument' on input line 248.
+Package atveryend Info: Executing hook `AtEndAfterFileList' on input line 248.
 
 
 Package rerunfilecheck Warning: File `main.out' has changed.
@@ -1229,26 +1233,23 @@ Package rerunfilecheck Warning: File `main.out' has changed.
 (rerunfilecheck)                or use package `bookmark'.
 
 Package rerunfilecheck Info: Checksums for `main.out':
-(rerunfilecheck)             Before: <no file>
-(rerunfilecheck)             After:  3EB709EC2CFDD69CAD2223EC83347BAF;1949.
+(rerunfilecheck)             Before: 3EB709EC2CFDD69CAD2223EC83347BAF;1949
+(rerunfilecheck)             After:  6F3EFB88B0591EF632B121796DD2609D;2044.
 
 LaTeX Font Warning: Some font shapes were not available, defaults substituted.
 
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
- 20175 strings out of 492649
- 297007 string characters out of 6129622
+ 20244 strings out of 492649
+ 298194 string characters out of 6129622
  469052 words of memory out of 5000000
- 23343 multiletter control sequences out of 15000+600000
- 120774 words of font info for 208 fonts, out of 8000000 for 9000
+ 23392 multiletter control sequences out of 15000+600000
+ 121596 words of font info for 214 fonts, out of 8000000 for 9000
  1302 hyphenation exceptions out of 8191
- 60i,16n,94p,908b,1860s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 60i,16n,94p,912b,1860s stack positions out of 5000i,500n,10000p,200000b,80000s
 {/usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/inconsolata/i4-t1-4.enc}{
 /usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/libertine/lbtn_25tcsq.enc}{/
 usr/local/texlive/2018/texmf-dist/fonts/enc/dvips/libertine/lbtn_7grukw.enc}{/u
@@ -1262,10 +1263,10 @@ e/LinLibertineT.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public/libe
 rtine/LinLibertineTB.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/public
 /libertine/LinLibertineTI.pfb></usr/local/texlive/2018/texmf-dist/fonts/type1/p
 ublic/txfonts/rtxr.pfb>
-Output written on main.pdf (2 pages, 331301 bytes).
+Output written on main.pdf (2 pages, 334658 bytes).
 PDF statistics:
- 90 PDF objects out of 1000 (max. 8388607)
- 68 compressed objects within 1 object stream
- 27 named destinations out of 1000 (max. 500000)
- 34829 words of extra memory for PDF output out of 35830 (max. 10000000)
+ 135 PDF objects out of 1000 (max. 8388607)
+ 112 compressed objects within 2 object streams
+ 30 named destinations out of 1000 (max. 500000)
+ 37485 words of extra memory for PDF output out of 42996 (max. 10000000)
 
