@@ -59,7 +59,7 @@
 
 R is a crazy language.
 \AT{Briefly describe why R is crazy.}
-In spite of this, R is widely used.
+Not only is R rife with strange behaviour, the most frequent users of R are statisticians and data analysts who often lack formal programming training.
 We would like to build a full-fledged type system for the language {\it that programmers will want to use}.
 Not only would this would serve to increase the assurance of R code, it would also open the door to type-based program optimizations.
 
@@ -74,7 +74,15 @@ Not only would this would serve to increase the assurance of R code, it would al
 %
 \section{Introduction}
 
+Types are good.
 
+R is crazy.
+
+We want to design a type system for R.
+
+Probably gradually typed.
+
+Base our type system on existing programming paradigms.
 
 %
 %
@@ -218,18 +226,37 @@ Ultimately, friendly-looking annotations will be attractive to users, and making
 \section{Our Plan}
 \label{sec:plan}
 
+Our aim is to design and implement a type system for R which will make correct R programs easier to write, and be widely adopted by R users.
+Thus the type system must be able to capture the established programming paradigms, and to ensure this we will ground our design on a large-scale analysis of existing R programs.
+
+In this section, we will describe our plan for tackling this issue.
+First, we discuss how we will ensure that the type system we design is practical for R users.
+Then, we describe a metric that we have established to measure how well a type system captures language usage in order to compare candidate type systems.
+
 %
 %
 \subsection{A Practical Type System}
 \label{sec:practicalTS}
 
+As we endeavour to design a type system which appeals to R programmers, we should take steps to ensure that it is grounded in the paradigms that are familiar to said programmers.
+To this end, we leverage some forthcoming work which performed a large-scale analysis of existing R code.
+Getting ones hands on R programs written by data analysts is no small feat, and we delve briefly into their methods now.
+
 End-user R code is typically some small script (called a {\it notebook}) which imports some data and modifies it in some way before performing some analysis.
 In many cases, the data being fed to the script is proprietary (e.g. customer data) or confidential (e.g. census data), which results in an inability to publish the script, even if the analyst were so inclined.
-In sum, getting our hands on R user code can be tricky.
+In sum, getting ones hands on R user code can be tricky.
 
 Thankfully, all is not lost: the Comprehensive R Archive Network (CRAN) is a repository of publicly available R package (i.e. library) code.
 Packages made available through CRAN must adhere to some criteria; among them, a guarantee that the package must be accompanied by some examples, tests, and/or vignettes to showcase package functionality.
-These examples are about as close as we can come to end-user R code, and serve as a great starting point for any analysis we undertake.
+These examples are about as close as one can come to end-user R code, and serve as a great starting point for any analysis of R programming patterns.
+
+We will test candidate type systems against this corpus of code.
+
+%
+%
+\subsection{Measuring Effectiveness}
+
+
 
 %
 %
