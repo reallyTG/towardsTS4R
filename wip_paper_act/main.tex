@@ -57,11 +57,15 @@
 
 \begin{abstract}
 
-R is a crazy language.
-\AT{Briefly describe why R is crazy.}
-Not only is R rife with strange behaviour, the most frequent users of R are statisticians and data analysts who often lack formal programming training.
-We would like to build a full-fledged type system for the language {\it that programmers will want to use}.
-Not only would this would serve to increase the assurance of R code, it would also open the door to type-based program optimizations.
+R is a fascinating language:
+It is dynamically typed, vectorized, both lazy and side-effecting, and it fosters an interactive style of programming.
+R is a popular tool for statisticians and scientists for performing data analysis, and the results of these analyses are used for a variety of purposes, including drawing conclusions from an experiment and informing policymakers.
+R owes some of its popularity to its ease of use, but the language does little to ensure that programs are truly correct.
+And when these programs underpin decision making, sometimes at a governmental level...
+
+We aim to empower data analysts with a language that is not simply easy to use, but easy to use {\it well}, so as to increase their confidence in the data analyses they undertake.
+To that end, we are developing a type system that is simple enough to be attractive to programmers while being expressive enough to capture existing programming paradigms.
+In this paper, we outline past, present, and future work as we build towards a type system for R. 
 
 \end{abstract}
 
@@ -74,15 +78,27 @@ Not only would this would serve to increase the assurance of R code, it would al
 %
 \section{Introduction}
 
-Types are good.
+From companies seeking to better understand their customers, to governments trying to build a better understanding of the people they govern, many organizations are collecting and analyzing an incredible amount of data.
+Often, the conclusions drawn from these analyses go on to inform the decisions made by these organizations, with often far reaching effects.
+Given that we are so impacted by this process, we should have the utmost faith in the tools which are used to perform this data analysis.
+The R programming language is one such tool.
 
-R is crazy.
+R is an interesting language:
+It is a dynamically typed, vectorized, lazy, side-effecting language designed by and for statisticians and data scientists.
+As a programming language, R is quite fascinating, and the language sees widespread use for data analysis tasks.
+With R programs being used to potentially inform policymakers across the globe, we should ensure that R is as trustworthy a language as it can be.
 
-We want to design a type system for R.
+To increase our assurance in the products of R, we want to design a type system for the language.
+Types are a great way to make programming languages less bug prone:
+catching potentially insidious type errors ahead of time, or perhaps automatically during program execution, eliminates a significant source of runtime errors in programs.
+Knowing that type errors are eliminated, or at least reduced, would give us more faith in R programs, and thus in the conclusions drawn from analyses performed in R.
 
-Probably gradually typed.
+To ensure that R programmers adopt out type system, we aim to propose a system which is informed by existing programming paradigms.
+We will achieve this by using a large-scale analysis of R programs as a sounding board, to check and measure the effectiveness of possible type system designs.
+When it comes time to implement our type system, we will likely opt for some form of gradual typing:
+this will allow programmers to opt-in to the type system where they deem appropriate, and will allow typed and untyped R code to interoperate seamlessly.
 
-Base our type system on existing programming paradigms.
+In this position paper, we briefly outline some of the work that we've done, and discuss the next steps in this long journey towards increasing our confidence in R programs.
 
 %
 %
@@ -90,7 +106,61 @@ Base our type system on existing programming paradigms.
 %
 \section{The R Programming Language}
 
-R~\cite{R_man} is ... .
+R~\cite{R_man} is a programming language developed by statisticians for the purpose of data analysis.
+R is a successor to the S programming language, and was originally designed to process data into vectors to be used by Fortran data analysis programs.
+It has since evolved into a full-fledged, general purpose programming language with an estimated 2 million users~\cite{eco11} as of 2011.
+R is built to foster an interactive programming model, where the user is working closely with the data:
+a typical R program will read in some data, mutate and/or transform it, and finally perform some analysis on the modified data.
+Further, this program is often itself modified and rerun by the data analyst.
+
+When considering what kinds of types would be relevant to programmers, one might be interested in the notions of ``type" already present in the language.
+These are discussed next,
+
+%
+%
+\subsection{Runtime Type Information (RTTI) in R}
+
+R is highly reflective, and a wealth of type-related information is available to programmers at runtime.
+A select few of R's reflection functions are mentioned below, and examples of each of them can be found in Figure~\ref{fig:reflectionEx}.
+
+First, the {\tt typeof} function yields the runtime type tag associated with a value---this tag represents the type of the value according to the R internals.
+In a sense, {\tt typeof} is the programmer's window into the R implementation.
+
+Another source of RTTI in R is a value's {\it attributes}:
+In R, values have an arbitrary amount of (named) metadata, called attributes, which can be easily modified at runtime using the {\tt attributes} and {\tt attr} functions.
+Some R values, such as data frames, named lists, and matrices have default attributes which may be used by R's builtin functions (e.g. a matrix's {\tt dims} attribute is used for printing the matrix).
+
+Another reflective function is {\tt class}, which (unsurprisingly) yields the class of a value.
+In R, values have a class according to their {\tt class} attribute, and the class of a value can be easily (re)defined by programmers at runtime.
+Importantly, dynamic dispatch is done based on the class of function arguments.
+
+In sum: R has an eclectic mix of RTTI, all of which is available to the programmer.
+The ease with which programmers can modify RTTI makes for some interesting usage patterns, and gives us a lot of interesting space to explore when designing a type system for the language.
+If anything, R programmers are creative, and capturing the paradigms of these creative programmers is an exciting undertaking. 
+
+\begin{figure}
+
+\begin{lstlisting}
+typeof(5L) == class(5L) # integer
+
+# list() creates an empty list
+typeof(list()) == class(list()) # list
+
+# data.frame() creates an empty data frame
+typeof(data.frame()) # list
+class(data.frame()) # data.frame
+attr(data.frame(), "class") # data.frame
+
+x <- 5 # initialize x to 5
+class(x) # numeric
+class(x) <- "character"
+class(x) # character
+
+\end{lstlisting}
+
+  \caption{Examples of reflective functions in R.}
+  \label{fig:reflectionEx}
+\end{figure}
 
 %
 %
@@ -102,18 +172,20 @@ We want to add types to R for two main reasons.
 
 First, types increase the assurance that programmers have in their code.
 If using a static type system, type-related errors can be caught statically, which communicates potential bugs to programmers at compile time.
-If using a dynamic type system, type-related errors are caught at runtime, which may well abort the program, but at least does not allow for values to be quietly misused.
+If using a dynamic type system, type-related errors are caught at runtime, and while this may abort the program, at least it does not allow for values to be quietly misused.
 
 When we increase assurance in a programming language, we thereby increase assurance in the products of that language.
 For instance, one might have more faith in a web server written in TypeScript than one written in JavaScript, since TypeScript at least catches static type errors in annotated code.
 So what are the products of R?
-R is a language primarily used by statisticians and data scientists to perform data analysis. 
-The conclusions drawn from these analyses go on to inform decisions in broader organizations:
+R is a language primarily used to perform data analysis, and the conclusions drawn from these analyses go on to inform decisions in broader organizations:
 For instance, census data analysis results go on to inform policymaking decisions.
 It is critical that we can trust the software used to draw these conclusions.
 
 Second, type information can be used by just-in-time compilers (JIT compilers, or JITs) to perform program optimizations at runtime.
-\AT{This one goes without saying, not sure how much to elaborate here.}
+As an example, with access to argument type information a JIT could optimize a call to a generic function with the implementation of that function for the specified argument type, without needing to speculate or collect type information at runtime.
+Concretely, a call such as {\tt x + y} could be replaced with a call to the implementation of {\tt +} for integers if {\tt x} and {\tt y} are known to be integers based on earlier annotations.
+
+
 
 %
 %
@@ -121,19 +193,21 @@ Second, type information can be used by just-in-time compilers (JIT compilers, o
 %
 \section{Concerns}
 
-Designing a type system for R is no small task.
+Thus far, we have established that designing and implementing a type system for R may prove useful.
+That said, designing a type system for R is no simple task, and there is a huge design space to consider.
+In this section, we explore some of the design concerns we are likely to face.
 
 %
 %
 \subsection{Type System Granularity and Complexity}
 
-When designing a type system for an existing, dynamic language, we have the freedom to decide what granularity of type information we want to express.
-In data-oriented languages, such as R, choosing the level of granularity is not so straightforward.
+When designing a type system for an existing, dynamic language, we have freedom to decide on the granularity of expressible type information.
+In a language such as R, choosing the right level of granularity is not so straightforward.
 
-For instance, consider vectors in R.
-Primitive types in R are vectorized, meaning that even scalars are actually vectors (e.g., the scalar 1 is implemented as a unit-length vector).
-That said, in many other languages, a distinction is made between scalars and vectors, and this distinction is coupled with some performance benefit.
-When designing a type system for R, we might be interested in distinguishing vectors and scalars.
+As an example, consider vectors in R.
+Primitive types in R are vectorized, meaning that primitives are always vectors (e.g., the scalar 1 is implemented as a unit-length vector).
+This is not the case in many other languages, where a distinction is made between scalars and vectors; a distinction that carries some performance benefit.
+Thus, it may be worthwhile to consider distinguishing scalars and vectors in R.
 
 Going a step further, perhaps it would be valuable to include the dimensions of data in a vector type.
 R already implements different functionality for operators acting on vectors depending on the lengths of the vectors.
@@ -148,7 +222,7 @@ c(1, 2, 3, 4) + c(1, 2). # => c(2, 4, 4, 6)
 On vectorized primitives, the $+$ operator will duplicate the second argument until it matches the length of the first.
 The 3rd line above illustrates this clearly: the second argument to $+$ there becomes {\tt c(1, 2, 1, 2)}.
 This is useful functionality, and indeed users of R are familiar with it, but it does introduce possible sources of error if used incorrectly.
-For instance, imagine if we were working with some data, and we wanted to normalize the data w.r.t. a known vector of values.
+For instance, imagine if we were working with some data, and we wanted to normalize the data with respect to a known vector of values.
 Consider:
 
 \begin{lstlisting}
@@ -163,14 +237,13 @@ norm( c( 5, 2)) # => c(5, 1, 0.25)
 In the first call to {\tt norm}, we see that the argument to {\tt norm} was divided element-wise by the vector defined in the function itself.
 In the second call, we see how R automatically pads vectors when the lengths don't quite match: here, {\tt c(5, 2)} essentially becomes {\tt c(5, 2, 1)}.
 In general, this is rather harmless, but when we consider R's use case as a data analysis tool, this represents {\it generating arbitrary data}: 
-The value inserted by the division operator is really a data point fabricated by the implementation of the function.
-In a sense, off-by-one errors can easily go unnoticed in R programs.
+The value inserted by the division operator is a data point fabricated by the implementation of the function.
 
-All that said, adding lengths to types may not be desirable.
-The complexity of the type system and associated annotations would be far greater, and there's no telling if users would subscribe to the restrictions imposed by e.g. statically encoding lengths.
-Many of these errors could be caught by runtime checks, for instance with an explicit length check in the {\tt norm} function above, but it is as easy to write those checks as it is to forget to put them.
-Further, designing annotations to allow users to express types in the language is complicated by the lexical complexity of R itself; in short, there is not a lot of wiggle room in the parser.
-It is critical that we balance complexity and granularity with usability.
+All that said, adding lengths to types may not be all that desirable.
+For one, the complexity of the type system and associated annotations would be greater, and there's no telling if users would subscribe to the restrictions imposed by e.g. statically encoding vector lengths.
+Many of the errors caused by vector lengths could be caught by runtime checks, for instance with an explicit length check in the {\tt norm} function above, but it is as easy to write those checks as it is to forget to put them.
+
+No matter the complexity, we need to ensure that the type system will be used by programmers.
 This is discussed next.
 
 %
@@ -181,13 +254,12 @@ If one of our goals is to increase our confidence in R programs, we need to ensu
 
 R users represent an interesting point in this design space.
 R is an old language, and R users are not your average programmers in the sense that they are likely not software engineers, developers, or computer scientists.
-The best way to understand how they interact with the language is through observation and analysis of the programs that they have written.
-But even that is no small feat, as R programs are not published the same way that the products of many other languages are on e.g. GitHub.
+The best way to understand how they interact with the language is through observation and analysis of the programs that they have written, but even this is no small feat, as R programs are not published the same way that the products of many other languages are on e.g. GitHub.
 This last point will be discussed further in Section~\ref{sec:practicalTS}.
 
 Ultimately, we need to balance the complexity of the type system with needs of R programmers.
 Perhaps a dependent type system would be useful and capable of capturing large swaths of existing R paradigms, but these types are difficult to express and may be too burdensome for R users. 
-On the other hand, differentiating scalars and vectors may not reflect existing R implementations, but perhaps R users would be able to quickly adapt to such a distinction.
+On the other hand, differentiating scalars and vectors may not reflect existing R implementations, and thus might be unfamiliar to many programmers, but perhaps R users would be able to quickly adapt to such a distinction.
 The key to adoption is to strike this balance, and conceive of a type system which captures everything that R programmers would want to capture. 
 We have made some progress towards this, discussed further in Section~\ref{sec:plan}.
 
@@ -197,15 +269,14 @@ We have made some progress towards this, discussed further in Section~\ref{sec:p
 
 A unique aspect of R is the data frame, which serves as the cornerstone of nearly all analyses written in R.
 As we mentioned, the process of a typical R program is to load data, modify and/or transform it, and perform an analysis.
-Typically, imported data is a {\it data frame}: an R data type which is effectively a list of lists, where each row represents an observation, and each column represented a thing that was observed. 
+Typically, imported data is a {\it data frame}: an R data type which is effectively a list of lists, where each row represents an observation, and each column representes something that was observed. 
 These objects underpin data analysis in R, and understanding the shape of your data is critical to successful data analysis.
 
 As data frames are of utmost importance, it stands to reason that we might like to create some type for them.
-How specific that type should be, however, is unclear: data frames are often quite large, and writing a type for such a thing would be tedious and perhaps not altogether informative if the data frame is used in simple ways.
+How specific that type should be, however, is unclear: data frames are often quite large, and writing a type for such a thing would be tedious and perhaps not altogether informative if the data frame is used in simply:
 If the only operation performed on the data frame is to normalize some column and plot it, then types are not supremely helpful.
 But what if, during the modification and transformation phase of a data pipeline, the analyst is working with several data frames and joining and collating them to create new data frames?
-Many of these operations are dependent on the types of some columns, and could fail in various ways if the column types are not compatible.
-These errors would be mitigated by (relatively) sophisticated data frame types.
+Many of these operations are dependent on the types of some columns and the number of rows, and could fail if the column types or row counts are not compatible; failures that would be caught by sophisticated data frame types.
 
 %
 %
@@ -242,21 +313,47 @@ As we endeavour to design a type system which appeals to R programmers, we shoul
 To this end, we leverage some forthcoming work which performed a large-scale analysis of existing R code.
 Getting ones hands on R programs written by data analysts is no small feat, and we delve briefly into their methods now.
 
-End-user R code is typically some small script (called a {\it notebook}) which imports some data and modifies it in some way before performing some analysis.
+End-user R code is typically some small script which imports some data and modifies it in some way before performing an analysis.
 In many cases, the data being fed to the script is proprietary (e.g. customer data) or confidential (e.g. census data), which results in an inability to publish the script, even if the analyst were so inclined.
-In sum, getting ones hands on R user code can be tricky.
+In short, end-user R programs are rarely published.
 
 Thankfully, all is not lost: the Comprehensive R Archive Network (CRAN) is a repository of publicly available R package (i.e. library) code.
 Packages made available through CRAN must adhere to some criteria; among them, a guarantee that the package must be accompanied by some examples, tests, and/or vignettes to showcase package functionality.
-These examples are about as close as one can come to end-user R code, and serve as a great starting point for any analysis of R programming patterns.
+These examples are about as close as one can come to end-user R code, showing how users are expected to use the package, and serve as a great starting point for any analysis of R programming patterns.
 
-We will test candidate type systems against this corpus of code.
+We will test candidate type systems against a corpus of code consisting of millions of lines of R code across over 10,000 packages.
+The full treatment of this corpus will be made available in a forthcoming paper.
 
 %
 %
 \subsection{Measuring Effectiveness}
 
+One metric for measuring the effectiveness of a particular type system is to consider the percentage of functions which are observed to be polymorphic when viewed through the lens of that system. 
+To quickly illustrate, consider the following snippet:
 
+\begin{lstlisting}
+addVec <- function(a, b) {
+  if (length(a) == length(b)
+    a + b
+}
+
+addVec(c(1L, 3L), c(1L, 3L))
+addVec(c(1.5), c(1.5))
+\end{lstlisting}
+
+Above, the type of {\tt c(1L, 3L)} (according to the {\tt typeof} function) is {\tt integer}, and the type of {\tt c(1.5)} is {\tt double}.
+Considering only these two calls, and this through the lens of R's standard types, the {\tt addTwo} function is polymorphic.
+If we defined a new type, say the {\tt real} numbers, then the {\tt addVec} function would be monomorphic, where both arguments have type {\tt real}.
+Of course, we could encode more information in the types, say the lengths of the vectors, and then the function would once again be polymorphic (here, it is called with {\tt real} vectors of length 1 and 2).
+With even more sophisticated types and a more holistic view of the function, we could say that the function is monomorphic, where both arguments are {\tt real} vectors of length {\tt n}.
+A polymorphism-based metric captures how effective a particular type system is at capturing function usage patterns.
+
+To give one concrete example from forthcoming work, we have found that nearly 20\% of functions were polymorphic with respect to R's {\tt typeof} function, meaning that nearly 20\% of functions were called with at least one polymorphic argument position.
+Here, a polymorphic argument is an argument that was inhabited by at least two values which would return different results if passed to {\tt typeof}.
+The {\tt addVec} function is such an example.
+We can reduce the proportion of polymorphic functions by defining new types (e.g. a {\tt real} number type), and exploring this space is a part of said forthcoming work.
+
+% Some work has already been done in conceiving of and testing type systems, but the systems that have been devised are rather rudimentary. 
 
 %
 %
@@ -264,8 +361,27 @@ We will test candidate type systems against this corpus of code.
 %
 \section{Related Work}
 
-There is a wealth of literature on analyzing language usage patterns.
-For instance, \ref{}
+Part of our process for ensuring the practicality of our type system is to use a large-scale language analysis as a sounding board, and there is a wealth of literature on analyzing language usage patterns.
+For instance, some work~\cite{pldi10a} explored the dynamic behaviour of JavaScript programs, testing assumptions that appeared frequently in the literature.
+Other, similar work~\cite{PythonAintDynamic} explored the dynamic behaviour of Python programs.
+Our aim is to use a similar analysis of R programs to check our type system, and keep our design grounded in the day-to-day usage of the language.
+
+When we finalize a type system, our implementation will likely be a gradual type system~\cite{tf-dls06}.
+In gradually typed languages, type annotations are optional, and typed and untyped code is allowed to interact seamlessly within the same program.
+In this design space, there are even more considerations: for instance, should we implement a sound gradual type system, where checks are inserted at the boundary of typed and untyped code?
+Or should we leave that boundary unchecked, as is the case in languages like TypeScript?
+If we insert checks at the boundary, we catch dynamic type errors at runtime, but a possibly steep~\cite{popl16} performance cost may be incurred.
+
+%
+%
+%
+%
+\section{Conclusion}
+
+With an unprecedented wealth of data at our fingertips, we should ensure that we have the utmost confidence in the tools that we use to analyze that data.
+To this end, we aim to build towards a type system for the R programming language, the tool of choice for millions of data analysts worldwide. 
+In this short paper, we have outlined our plans to tackle this issue, and discussed some potential obstacles in this endeavour.
+We dream of a world where data analysis programs are bug free, and building a type system for R is a step towards realizing that dream.
 
 %
 %
