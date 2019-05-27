@@ -7,51 +7,65 @@ Reallocated wiz_functions (elt_size=4) to 6000 items from 3000.
 Database file #1: bib/biblio.bib
 Database file #2: bib/jv.bib
 Database file #3: bib/r.bib
-Database file #4: bib/new.bib
-Database file #5: bib/gradual.bib
+Database file #4: bib/gradual.bib
 Reallocated singl_function (elt_size=4) to 100 items from 50.
 Reallocated glb_str_ptr (elt_size=4) to 20 items from 10.
 Reallocated global_strs (elt_size=20001) to 20 items from 10.
 Reallocated glb_str_end (elt_size=4) to 20 items from 10.
 Reallocated singl_function (elt_size=4) to 100 items from 50.
-You've used 1 entry,
+Warning--empty publisher in PythonAintDynamic
+Warning--empty address in PythonAintDynamic
+Warning--empty publisher in pldi10a
+Warning--empty address in pldi10a
+Warning--page numbers missing in both pages and numpages fields in pldi10a
+Warning--empty publisher in eco11
+Warning--empty address in eco11
+Warning--page numbers missing in both pages and numpages fields in eco11
+Warning--empty publisher in popl16
+Warning--empty address in popl16
+Warning--page numbers missing in both pages and numpages fields in popl16
+Warning--empty publisher in tf-dls06
+Warning--empty address in tf-dls06
+Warning--page numbers missing in both pages and numpages fields in tf-dls06
+You've used 6 entries,
             5719 wiz_defined-function locations,
-            1306 strings with 14800 characters,
-and the built_in function-call counts, 853 in all, are:
-= -- 86
-> -- 20
+            1332 strings with 15552 characters,
+and the built_in function-call counts, 6336 in all, are:
+= -- 604
+> -- 242
 < -- 0
-+ -- 5
-- -- 8
-* -- 42
-:= -- 101
-add.period$ -- 5
-call.type$ -- 1
-change.case$ -- 5
-chr.to.int$ -- 1
-cite$ -- 1
-duplicate$ -- 73
-empty$ -- 52
-format.name$ -- 8
-if$ -- 164
++ -- 82
+- -- 88
+* -- 432
+:= -- 675
+add.period$ -- 26
+call.type$ -- 6
+change.case$ -- 40
+chr.to.int$ -- 6
+cite$ -- 20
+duplicate$ -- 614
+empty$ -- 427
+format.name$ -- 104
+if$ -- 1413
 int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 0
-newline$ -- 48
-num.names$ -- 8
-pop$ -- 21
+missing$ -- 25
+newline$ -- 86
+num.names$ -- 48
+pop$ -- 283
 preamble$ -- 1
-purify$ -- 14
+purify$ -- 94
 quote$ -- 0
-skip$ -- 30
+skip$ -- 220
 stack$ -- 0
-substring$ -- 57
-swap$ -- 5
+substring$ -- 384
+swap$ -- 41
 text.length$ -- 0
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 30
-warning$ -- 0
-while$ -- 8
+type$ -- 180
+warning$ -- 14
+while$ -- 43
 width$ -- 0
-write$ -- 56
+write$ -- 135
+(There were 14 warnings)

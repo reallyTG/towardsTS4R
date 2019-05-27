@@ -1,4 +1,4 @@
-\documentclass[sigplan,10pt,review,anonymous]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
+\documentclass[sigplan,10pt,review]{acmart}\settopmatter{printfolios=true,printccs=false,printacmref=false}
 \usepackage{booktabs,listings,xspace,wrapfig}
 \lstset{language=R}
 \usepackage{my_style}
@@ -51,6 +51,19 @@
 %\acmDOI{10.475/123_4}
 %\acmConference[OOPSLAs]{Woodstock conference}{July 1997}{El Paso, Texas USA}
 %\acmYear{1997}%\copyrightyear{2016}%\acmPrice{15.00}
+
+\author{Alexi Turcotte}
+\affiliation{
+  \institution{Northeastern University}            %% \institution is required
+}
+% \email{alexi@ccs.neu.edu}          %% \email is recommended
+
+\author{Jan Vitek}
+\affiliation{
+  \institution{Northeastern University}            %% \institution is required
+}
+% \email{j.vitek@northeastern.edu}          %% \email is recommended
+
 \begin{document}
 
 \title{Towards a Type System for R}
@@ -113,8 +126,8 @@ R is built to foster an interactive programming model, where the user is working
 a typical R program will read in some data, mutate and/or transform it, and finally perform some analysis on the modified data.
 Further, this program is often itself modified and rerun by the data analyst.
 
-When considering what kinds of types would be relevant to programmers, one might be interested in the notions of ``type" already present in the language.
-These are discussed next,
+When considering what types would be relevant to programmers, one might be interested in the notions of ``type" already present in the language.
+These are discussed next.
 
 %
 %
@@ -351,9 +364,7 @@ A polymorphism-based metric captures how effective a particular type system is a
 To give one concrete example from forthcoming work, we have found that nearly 20\% of functions were polymorphic with respect to R's {\tt typeof} function, meaning that nearly 20\% of functions were called with at least one polymorphic argument position.
 Here, a polymorphic argument is an argument that was inhabited by at least two values which would return different results if passed to {\tt typeof}.
 The {\tt addVec} function is such an example.
-We can reduce the proportion of polymorphic functions by defining new types (e.g. a {\tt real} number type), and exploring this space is a part of said forthcoming work.
-
-% Some work has already been done in conceiving of and testing type systems, but the systems that have been devised are rather rudimentary. 
+We can reduce the proportion of polymorphic functions by defining new types (e.g. a {\tt real} type), and exploring this space is a part of said forthcoming work.
 
 %
 %
@@ -387,6 +398,6 @@ We dream of a world where data analysis programs are bug free, and building a ty
 %
 %
 \bibliographystyle{boilerplate/ACM-Reference-Format}
-\bibliography{bib/biblio,bib/jv,bib/r,bib/new,bib/gradual}
+\bibliography{bib/biblio,bib/jv,bib/r,bib/gradual}
 \end{document}
 
